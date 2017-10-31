@@ -1,9 +1,10 @@
 # XKCollectionViewLayout
 Simple UICollectionViewFlowLayout subclass for common grid layouts
 
-* Simple to use
+* Easy to use
 * Storyboard support (configuration)
 * Regular (R) / Compact (C) size classes parameters
+* Adapt to UICollectionView size changes
 
 ## Sample 1 (Fill)
 
