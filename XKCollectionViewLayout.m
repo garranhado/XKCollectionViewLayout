@@ -23,7 +23,8 @@
     
     CGRect frame = self.collectionView.frame;
     
-    BOOL compact = self.collectionView.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+    BOOL compact = !(self.collectionView.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular &&
+                    self.collectionView.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassRegular);
     
     XKCollectionViewLayoutMode layoutMode = compact ? self.layoutModeC : self.layoutModeR;
     
