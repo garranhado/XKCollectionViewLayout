@@ -143,3 +143,15 @@ layout.spacingC = CGSizeMake(10.0, 10.0);
 ![Screenshot](https://github.com/garranhado/XKCollectionViewLayout/blob/master/Samples/05P.png)
 
 ![Screenshot](https://github.com/garranhado/XKCollectionViewLayout/blob/master/Samples/05L.png)
+
+# XKStackCollectionViewLayout
+
+For e.g. vertical stacked horizontal collections (shelfs).
+
+# XKPageCollectionViewLayout
+
+Behaviour like UIPageViewController.
+
+# XKCustomCollectionViewLayout
+
+For custom cell frame.
