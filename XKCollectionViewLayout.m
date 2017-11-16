@@ -21,7 +21,7 @@
     
     // Setup
     
-    CGRect frame = self.collectionView.frame;
+    CGSize size = self.collectionView.bounds.size;
     
     BOOL compact = !(self.collectionView.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular &&
                     self.collectionView.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassRegular);
@@ -51,14 +51,14 @@
             float aspect = cellSize.width / cellSize.height;
             
             if (numberOfItemsPerRow == 0) {
-                int count = (int)MAX(frame.size.width / cellSize.width, 1.0);
-                float availableWidth = frame.size.width - (spacing.width * (float)(count - 1)) - (margin.width * 2.0);
+                int count = (int)MAX(size.width / cellSize.width, 1.0);
+                float availableWidth = size.width - (spacing.width * (float)(count - 1)) - (margin.width * 2.0);
                 float w = floor(availableWidth / (float)count);
                 
                 self.itemSize = CGSizeMake(w, (w / aspect) + cellExtent);
                 self.sectionInset = UIEdgeInsetsMake(margin.height, margin.width, margin.height, margin.width);
             } else {
-                float availableWidth = frame.size.width - ((spacing.width * (float)(numberOfItemsPerRow - 1)) + (margin.width * 2.0));
+                float availableWidth = size.width - ((spacing.width * (float)(numberOfItemsPerRow - 1)) + (margin.width * 2.0));
                 float w = floor(availableWidth / (float)numberOfItemsPerRow);
                 
                 self.itemSize = CGSizeMake(w, (w / aspect) + cellExtent);
@@ -66,10 +66,10 @@
             }
         } break;
         case XKCollectionViewLayoutModeDisperse: {
-            int count = (int)floor(MAX(frame.size.width / cellSize.width, 1.0));
-            float availableWidth = frame.size.width - (spacing.width * (float)(count - 1)) - (margin.width * 2.0);
+            int count = (int)floor(MAX(size.width / cellSize.width, 1.0));
+            float availableWidth = size.width - (spacing.width * (float)(count - 1)) - (margin.width * 2.0);
             count = (int)floor(MAX(availableWidth / cellSize.width, 1.0));
-            availableWidth = frame.size.width - (cellSize.width * (float)count);
+            availableWidth = size.width - (cellSize.width * (float)count);
             
             float pw = floor(availableWidth / (float)(count + 1));
             
@@ -77,10 +77,10 @@
             self.sectionInset = UIEdgeInsetsMake(margin.height, pw, margin.height, pw);
         } break;
         case XKCollectionViewLayoutModeCenter: {
-            int count = (int)floor(MAX(frame.size.width / cellSize.width, 1.0));
-            float availableWidth = frame.size.width - (spacing.width * (float)(count - 1)) - (margin.width * 2.0);
+            int count = (int)floor(MAX(size.width / cellSize.width, 1.0));
+            float availableWidth = size.width - (spacing.width * (float)(count - 1)) - (margin.width * 2.0);
             count = (int)floor(MAX(availableWidth / cellSize.width, 1.0));
-            availableWidth = frame.size.width - (cellSize.width * (float)count) - (spacing.width * (float)(count - 1));
+            availableWidth = size.width - (cellSize.width * (float)count) - (spacing.width * (float)(count - 1));
             
             float pw = floor(availableWidth / 2.0);
             
@@ -88,10 +88,10 @@
             self.sectionInset = UIEdgeInsetsMake(margin.height, pw, margin.height, pw);
         } break;
         case XKCollectionViewLayoutModeLeft: {
-            int count = (int)floor(MAX(frame.size.width / cellSize.width, 1.0));
-            float availableWidth = frame.size.width - (spacing.width * (float)(count - 1)) - (margin.width * 2.0);
+            int count = (int)floor(MAX(size.width / cellSize.width, 1.0));
+            float availableWidth = size.width - (spacing.width * (float)(count - 1)) - (margin.width * 2.0);
             count = (int)floor(MAX(availableWidth / cellSize.width, 1.0));
-            availableWidth = frame.size.width - (cellSize.width * (float)count) - (spacing.width * (float)(count - 1));
+            availableWidth = size.width - (cellSize.width * (float)count) - (spacing.width * (float)(count - 1));
             
             float pw = floor(availableWidth - spacing.width);
             
@@ -99,10 +99,10 @@
             self.sectionInset = UIEdgeInsetsMake(margin.height, margin.width, margin.height, pw);
         } break;
         case XKCollectionViewLayoutModeRight: {
-            int count = (int)floor(MAX(frame.size.width / cellSize.width, 1.0));
-            float availableWidth = frame.size.width - (spacing.width * (float)(count - 1)) - (margin.width * 2.0);
+            int count = (int)floor(MAX(size.width / cellSize.width, 1.0));
+            float availableWidth = size.width - (spacing.width * (float)(count - 1)) - (margin.width * 2.0);
             count = (int)floor(MAX(availableWidth / cellSize.width, 1.0));
-            availableWidth = frame.size.width - (cellSize.width * (float)count) - (spacing.width * (float)(count - 1));
+            availableWidth = size.width - (cellSize.width * (float)count) - (spacing.width * (float)(count - 1));
             
             float pw = floor(availableWidth - spacing.width);
             
@@ -124,7 +124,48 @@
 
 @end
 
-@implementation XKPagedCollectionViewLayout
+@implementation XKStackCollectionViewLayout
+
+- (void)prepareLayout {
+    [super prepareLayout];
+    
+    if (!self.collectionView) {
+        return;
+    }
+    
+    // Setup
+    
+    CGSize size = self.collectionView.bounds.size;
+    
+    BOOL compact = !(self.collectionView.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular &&
+                     self.collectionView.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassRegular);
+    
+    float cellSize = compact ? self.cellSizeC : self.cellSizeR;
+    
+    float margin = compact ? self.marginC : self.marginR;
+    float spacing = compact ? self.spacingC : self.spacingR;
+    
+    //
+    
+    self.minimumInteritemSpacing = 0.0;
+    self.minimumLineSpacing = spacing;
+    
+    if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
+        self.itemSize = CGSizeMake(size.width, cellSize);
+        self.sectionInset = UIEdgeInsetsMake(margin, 0.0, margin, 0.0);
+    } else {
+        self.itemSize = CGSizeMake(cellSize, size.height);
+        self.sectionInset = UIEdgeInsetsMake(0.0, margin, 0.0, margin);
+    }
+}
+
+- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {
+    return !(CGSizeEqualToSize(newBounds.size, self.collectionView.bounds.size));
+}
+
+@end
+
+@implementation XKPageCollectionViewLayout
 
 - (void)setCurrentPage:(NSInteger)currentPage {
     _currentPage = currentPage;
@@ -135,9 +176,9 @@
     
     if (self.collectionView) {
         if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
-            self.collectionView.contentOffset = CGPointMake(0.0, self.collectionView.frame.size.height * currentPage);
+            self.collectionView.contentOffset = CGPointMake(0.0, self.collectionView.bounds.size.height * currentPage);
         } else {
-            self.collectionView.contentOffset = CGPointMake(self.collectionView.frame.size.width * currentPage, 0.0);
+            self.collectionView.contentOffset = CGPointMake(self.collectionView.bounds.size.width * currentPage, 0.0);
         }
     }
 }
@@ -161,10 +202,10 @@
     
     if (self.collectionView) {
         if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
-            [self.collectionView setContentOffset:CGPointMake(0.0, self.collectionView.frame.size.height * currentPage)
+            [self.collectionView setContentOffset:CGPointMake(0.0, self.collectionView.bounds.size.height * currentPage)
                                          animated:animated];
         } else {
-            [self.collectionView setContentOffset:CGPointMake(self.collectionView.frame.size.width * currentPage, 0.0)
+            [self.collectionView setContentOffset:CGPointMake(self.collectionView.bounds.size.width * currentPage, 0.0)
                                          animated:animated];
         }
     }
@@ -182,7 +223,7 @@
     self.minimumInteritemSpacing = 0.0;
     self.minimumLineSpacing = 0.0;
     
-    self.itemSize = self.collectionView.frame.size;
+    self.itemSize = self.collectionView.bounds.size;
     self.sectionInset = UIEdgeInsetsMake(0.0, 0.0, 0.0, 0.0);
     
     self.estimatedItemSize = CGSizeZero;
@@ -193,9 +234,9 @@
     
     if (self.collectionView) {
         if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
-            _currentPage = floor(proposedContentOffset.y / self.collectionView.frame.size.height);
+            _currentPage = floor(proposedContentOffset.y / self.collectionView.bounds.size.height);
         } else {
-            _currentPage = floor(proposedContentOffset.x / self.collectionView.frame.size.width);
+            _currentPage = floor(proposedContentOffset.x / self.collectionView.bounds.size.width);
         }
         
         if (self.pageControl) {
@@ -210,9 +251,9 @@
     
     if (self.collectionView) {
         if (self.scrollDirection == UICollectionViewScrollDirectionVertical) {
-            return CGPointMake(proposedContentOffset.x, self.collectionView.frame.size.height * self.currentPage);
+            return CGPointMake(proposedContentOffset.x, self.collectionView.bounds.size.height * self.currentPage);
         } else {
-            return CGPointMake(self.collectionView.frame.size.width * self.currentPage, proposedContentOffset.y);
+            return CGPointMake(self.collectionView.bounds.size.width * self.currentPage, proposedContentOffset.y);
         }
     }
     

@@ -47,7 +47,19 @@ typedef NS_ENUM(NSInteger, XKCollectionViewLayoutMode) {
 
 @end
 
-@interface XKPagedCollectionViewLayout : UICollectionViewFlowLayout
+@interface XKStackCollectionViewLayout : UICollectionViewFlowLayout
+
+@property (nonatomic) IBInspectable float cellSizeR;
+@property (nonatomic) IBInspectable float cellSizeC;
+
+@property (nonatomic) IBInspectable float marginR;
+@property (nonatomic) IBInspectable float marginC;
+@property (nonatomic) IBInspectable float spacingR;
+@property (nonatomic) IBInspectable float spacingC;
+
+@end
+
+@interface XKPageCollectionViewLayout : UICollectionViewFlowLayout
 
 @property (nonatomic) NSInteger currentPage;
 @property (nonatomic) NSInteger numberOfPages;
@@ -59,7 +71,7 @@ typedef NS_ENUM(NSInteger, XKCollectionViewLayoutMode) {
 
 @end
 
-@protocol XKCollectionViewFrameSource <NSObject>
+@protocol XKCustomCollectionViewFrameSource <NSObject>
 
 - (CGRect)frameForItemAtIndexPath:(NSIndexPath *)indexPath;
 
@@ -67,6 +79,6 @@ typedef NS_ENUM(NSInteger, XKCollectionViewLayoutMode) {
 
 @interface XKCustomCollectionViewLayout : UICollectionViewLayout
 
-@property (nonatomic, weak) id<XKCollectionViewFrameSource> frameSource;
+@property (nonatomic, weak) id<XKCustomCollectionViewFrameSource> frameSource;
 
 @end
